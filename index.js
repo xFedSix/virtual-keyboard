@@ -1,14 +1,14 @@
-function addMainElement() {
+const addMainElement = () => {
   const main = document.createElement("main");
   main.className = "main";
   let template = "";
   template += `<h1 class="title">Виртуальная клавиатура</h1>`;
   template += `<textarea class="textarea"></textarea>`;
-  template += `<div class="keyboard" id="keyboard"></div>`;
-  template += `<p class="paragraf">Клавиатура создана в операционной системе Windows<br />Для переключения языка комбинация: левыe ctrl + alt</p>`;
+  template += `<div class="keyboard ru" id="keyboard"></div>`;
+  template += `<p class="paragraf">Клавиатура создана в операционной системе Windows<br />Для переключения языка комбинация: левыe alt + Shift</p>`;
   document.body.append(main);
   document.querySelector(".main").innerHTML = template;
-}
+};
 addMainElement();
 
 const englishKeys = {
@@ -67,7 +67,7 @@ const englishKeys = {
   ArrowUp: "▲",
   ShiftRight: ["shift", "shift"],
   ControlLeft: ["ctrl", "ctrl"],
-  META: ["Win", "Win"],
+  WIN: ["Win", "Win"],
   AltLeft: ["alt", "alt"],
   Space: [" ", " "],
   AltRight: ["alt", "alt"],
@@ -119,7 +119,7 @@ const russianKeys = {
   Semicolon: ["ж", "Ж"],
   Quote: ["э", "Э"],
   Enter: ["enter", "enter"],
-  ShiftLeft: "shift",
+  ShiftLeft: ["shift", "shift"],
   KeyZ: ["я", "Я"],
   KeyX: ["ч", "Ч"],
   KeyC: ["с", "С"],
@@ -133,7 +133,7 @@ const russianKeys = {
   ArrowUp: "▲",
   ShiftRight: ["shift", "shift"],
   ControlLeft: ["ctrl", "ctrl"],
-  META: ["Win", "Win"],
+  WIN: ["Win", "Win"],
   AltLeft: ["alt", "alt"],
   Space: [" ", " "],
   AltRight: ["alt", "alt"],
@@ -142,54 +142,138 @@ const russianKeys = {
   ArrowDown: "▼",
   ArrowRight: "▶",
 };
+const keyboard = document.querySelector(".keyboard");
 
-let keys = englishKeys;
-function addKeys() {
-  let keyCodes = Object.keys(keys);
-  let keyOut = "";
-  keyCodes.forEach((i) => {
-    itemIndex = keyCodes.indexOf(i);
-    if (
-      itemIndex == 14 ||
-      itemIndex == 28 ||
-      itemIndex == 41 ||
-      itemIndex == 54
-    ) {
-      keyOut += `<br>`;
-    }
-    if (keys[i][0].match(/delete|tab|CapsLock|enter|shift| /)) {
-      keyOut +=
-        `<button type="button" class="keyboard__key keyboard__key_wide" id = "${i}" data="${i}">` +
-        keys[i][0] +
-        `</button>`;
-    } else {
-      keyOut +=
-        `<button type="button" class="keyboard__key" data="${i}">` +
-        keys[i][0] +
-        `</button>`;
-    }
-    document.querySelector(".keyboard").innerHTML = keyOut;
-  });
-}
-addKeys();
-let keyValue = document.querySelectorAll(".keyboard__key");
 let textArea = document.querySelector(".textarea");
-keyValue.forEach((element) => {
-  element.onclick = () => {
-    textArea.textContent += element.textContent;
-  };
+const addKeys = () => {
+  if (keyboard.classList.contains("ru")) {
+    let keys = russianKeys;
+    let keyCodes = Object.keys(keys);
+    let keyOut = "";
+    keyCodes.forEach((i) => {
+      itemIndex = keyCodes.indexOf(i);
+      if (
+        itemIndex == 14 ||
+        itemIndex == 28 ||
+        itemIndex == 41 ||
+        itemIndex == 54
+      ) {
+        keyOut += `<br>`;
+      }
+      if (keys[i][0].match(/delete|tab|CapsLock|enter|shift| /)) {
+        keyOut +=
+          `<button type="button" class="keyboard__key keyboard__key_wide" id = "${i}" data="${i}">` +
+          keys[i][0] +
+          `</button>`;
+      } else {
+        keyOut +=
+          `<button type="button" class="keyboard__key" id = "${i}" data="${i}">` +
+          keys[i][0] +
+          `</button>`;
+      }
+      document.querySelector(".keyboard").innerHTML = keyOut;
+    });
+  } else {
+    let keys = englishKeys;
+    let keyCodes = Object.keys(keys);
+    let keyOut = "";
+    keyCodes.forEach((i) => {
+      itemIndex = keyCodes.indexOf(i);
+      if (
+        itemIndex == 14 ||
+        itemIndex == 28 ||
+        itemIndex == 41 ||
+        itemIndex == 54
+      ) {
+        keyOut += `<br>`;
+      }
+      if (keys[i][0].match(/delete|tab|CapsLock|enter|shift| /)) {
+        keyOut +=
+          `<button type="button" class="keyboard__key keyboard__key_wide" id = "${i}" data="${i}">` +
+          keys[i][0] +
+          `</button>`;
+      } else {
+        keyOut +=
+          `<button type="button" class="keyboard__key" id = "${i}" data="${i}">` +
+          keys[i][0] +
+          `</button>`;
+      }
+      document.querySelector(".keyboard").innerHTML = keyOut;
+    });
+  }
+};
+addKeys();
+
+const clearKeyboard = () => {
+  document.getElementById("keyboard").innerHTML = "";
+};
+let keyValue = document.querySelectorAll(".keyboard__key");
+
+window.addEventListener("keydown", function (e) {
+  if (e.altKey && e.shiftKey) {
+    clearKeyboard();
+    if (keyboard.classList.contains("ru")) {
+      keyboard.classList.remove("ru");
+      keyboard.classList.add("en");
+    } else {
+      keyboard.classList.add("ru");
+      keyboard.classList.remove("en");
+    }
+    addKeys();
+  }
 });
 
-const keysHandler = (e) => {
-  textArea.textContent += e.key;
-  document
-    .querySelector(".keyboard__key[data=" + e.code + "]")
-    .classList.add("active");
+keyboard.onclick = (e) => {
+  let target = e.target;
+  if (
+    target.id !== "WIN" &&
+    target.id !== "WIN" &&
+    target.id !== "AltLeft" &&
+    target.id !== "ControlLeft" &&
+    target.id !== "ShiftLeft" &&
+    target.id !== "CapsLock" &&
+    target.id !== "Tab" &&
+    target.id !== "Backspace" &&
+    target.id !== "Enter" &&
+    target.id !== "ShiftRight" &&
+    target.id !== "ArrowUp" &&
+    target.id !== "ArrowDown" &&
+    target.id !== "ArrowLeft" &&
+    target.id !== "ArrowRight" &&
+    target.id !== "AltRight" &&
+    target.id !== "ControlRight"
+  ) {
+    textArea.textContent += target.textContent;
+  }
 };
-window.addEventListener("keydown", keysHandler);
-window.addEventListener("keyup", removeClass);
-function removeClass() {
-  keyValue.forEach((e) => {
-    e.classList.remove("active");
-  });
-}
+
+const keysHandler = (e) => {
+  if (
+    e.code !== "AltLeft" &&
+    e.code !== "WIN" &&
+    e.code !== "ControlLeft" &&
+    e.code !== "ShiftLeft" &&
+    e.code !== "CapsLock" &&
+    e.code !== "Tab" &&
+    e.code !== "Backspace" &&
+    e.code !== "Enter" &&
+    e.code !== "ShiftRight" &&
+    e.code !== "ArrowUp" &&
+    e.code !== "ArrowDown" &&
+    e.code !== "ArrowLeft" &&
+    e.code !== "ArrowRight" &&
+    e.code !== "AltRight" &&
+    e.code !== "ControlRight"
+  ) {
+    textArea.textContent += e.key;
+  }
+  const pressedKey = document.querySelector(
+    ".keyboard__key[data=" + e.code + "]"
+  );
+  pressedKey.classList.add("active");
+  setTimeout(() => {
+    pressedKey.classList.remove("active");
+  }, 100);
+};
+
+window.onkeydown = keysHandler;
