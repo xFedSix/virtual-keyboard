@@ -67,7 +67,7 @@ const englishKeys = {
   ArrowUp: "▲",
   ShiftRight: ["shift", "shift"],
   ControlLeft: ["ctrl", "ctrl"],
-  META: ["Win", "Win"],
+  WIN: ["Win", "Win"],
   AltLeft: ["alt", "alt"],
   Space: [" ", " "],
   AltRight: ["alt", "alt"],
@@ -133,7 +133,7 @@ const russianKeys = {
   ArrowUp: "▲",
   ShiftRight: ["shift", "shift"],
   ControlLeft: ["ctrl", "ctrl"],
-  META: ["Win", "Win"],
+  WIN: ["Win", "Win"],
   AltLeft: ["alt", "alt"],
   Space: [" ", " "],
   AltRight: ["alt", "alt"],
@@ -164,7 +164,7 @@ function addKeys() {
         `</button>`;
     } else {
       keyOut +=
-        `<button type="button" class="keyboard__key" data="${i}">` +
+        `<button type="button" class="keyboard__key" id = "${i}" data="${i}">` +
         keys[i][0] +
         `</button>`;
     }
@@ -174,14 +174,50 @@ function addKeys() {
 addKeys();
 let keyValue = document.querySelectorAll(".keyboard__key");
 let textArea = document.querySelector(".textarea");
-keyValue.forEach((element) => {
-  element.onclick = () => {
-    textArea.textContent += element.textContent;
+keyValue.forEach((e) => {
+  e.onclick = () => {
+    if (
+      e.id !== "AltLeft" &&
+      e.id !== "WIN" &&
+      e.id !== "ControlLeft" &&
+      e.id !== "ShiftLeft" &&
+      e.id !== "CapsLock" &&
+      e.id !== "Tab" &&
+      e.id !== "Backspace" &&
+      e.id !== "Enter" &&
+      e.id !== "ShiftRight" &&
+      e.id !== "ArrowUp" &&
+      e.id !== "ArrowDown" &&
+      e.id !== "ArrowLeft" &&
+      e.id !== "ArrowRight" &&
+      e.id !== "AltRight" &&
+      e.id !== "ControlRight"
+    ) {
+      textArea.textContent += e.textContent;
+    }
   };
 });
 
 const keysHandler = (e) => {
-  textArea.textContent += e.key;
+  if (
+    e.code !== "AltLeft" &&
+    e.code !== "WIN" &&
+    e.code !== "ControlLeft" &&
+    e.code !== "ShiftLeft" &&
+    e.code !== "CapsLock" &&
+    e.code !== "Tab" &&
+    e.code !== "Backspace" &&
+    e.code !== "Enter" &&
+    e.code !== "ShiftRight" &&
+    e.code !== "ArrowUp" &&
+    e.code !== "ArrowDown" &&
+    e.code !== "ArrowLeft" &&
+    e.code !== "ArrowRight" &&
+    e.code !== "AltRight" &&
+    e.code !== "ControlRight"
+  ) {
+    textArea.textContent += e.key;
+  }
   document
     .querySelector(".keyboard__key[data=" + e.code + "]")
     .classList.add("active");
