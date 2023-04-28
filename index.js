@@ -119,7 +119,7 @@ const russianKeys = {
   Semicolon: ["ж", "Ж"],
   Quote: ["э", "Э"],
   Enter: ["enter", "enter"],
-  ShiftLeft: ["shift", "shift"],
+  ShiftLeft: "shift",
   KeyZ: ["я", "Я"],
   KeyX: ["ч", "Ч"],
   KeyC: ["с", "С"],
@@ -144,6 +144,7 @@ const russianKeys = {
 };
 const keyboard = document.querySelector(".keyboard");
 
+let textArea = document.querySelector(".textarea");
 const addKeys = () => {
   if (keyboard.classList.contains("ru")) {
     let keys = russianKeys;
@@ -202,31 +203,49 @@ const addKeys = () => {
   }
 };
 addKeys();
+
+const clearKeyboard = () => {
+  document.getElementById("keyboard").innerHTML = "";
+};
 let keyValue = document.querySelectorAll(".keyboard__key");
-let textArea = document.querySelector(".textarea");
-keyValue.forEach((e) => {
-  e.onclick = () => {
-    if (
-      e.id !== "AltLeft" &&
-      e.id !== "WIN" &&
-      e.id !== "ControlLeft" &&
-      e.id !== "ShiftLeft" &&
-      e.id !== "CapsLock" &&
-      e.id !== "Tab" &&
-      e.id !== "Backspace" &&
-      e.id !== "Enter" &&
-      e.id !== "ShiftRight" &&
-      e.id !== "ArrowUp" &&
-      e.id !== "ArrowDown" &&
-      e.id !== "ArrowLeft" &&
-      e.id !== "ArrowRight" &&
-      e.id !== "AltRight" &&
-      e.id !== "ControlRight"
-    ) {
-      textArea.textContent += e.textContent;
+
+window.addEventListener("keydown", function (e) {
+  if (e.altKey && e.shiftKey) {
+    clearKeyboard();
+    if (keyboard.classList.contains("ru")) {
+      keyboard.classList.remove("ru");
+      keyboard.classList.add("en");
+    } else {
+      keyboard.classList.add("ru");
+      keyboard.classList.remove("en");
     }
-  };
+    addKeys();
+  }
 });
+
+keyboard.onclick = (e) => {
+  let target = e.target;
+  if (
+    target.id !== "WIN" &&
+    target.id !== "WIN" &&
+    target.id !== "AltLeft" &&
+    target.id !== "ControlLeft" &&
+    target.id !== "ShiftLeft" &&
+    target.id !== "CapsLock" &&
+    target.id !== "Tab" &&
+    target.id !== "Backspace" &&
+    target.id !== "Enter" &&
+    target.id !== "ShiftRight" &&
+    target.id !== "ArrowUp" &&
+    target.id !== "ArrowDown" &&
+    target.id !== "ArrowLeft" &&
+    target.id !== "ArrowRight" &&
+    target.id !== "AltRight" &&
+    target.id !== "ControlRight"
+  ) {
+    textArea.textContent += target.textContent;
+  }
+};
 
 const keysHandler = (e) => {
   if (
@@ -248,30 +267,13 @@ const keysHandler = (e) => {
   ) {
     textArea.textContent += e.key;
   }
-  document
-    .querySelector(".keyboard__key[data=" + e.code + "]")
-    .classList.add("active");
+  const pressedKey = document.querySelector(
+    ".keyboard__key[data=" + e.code + "]"
+  );
+  pressedKey.classList.add("active");
+  setTimeout(() => {
+    pressedKey.classList.remove("active");
+  }, 100);
 };
-window.addEventListener("keydown", keysHandler);
-window.addEventListener("keyup", removeClass);
-function removeClass() {
-  keyValue.forEach((e) => {
-    e.classList.remove("active");
-  });
-}
-const clearKeyboard = () => {
-  document.getElementById("keyboard").innerHTML = "";
-};
-window.addEventListener("keydown", function (e) {
-  if (e.altKey && e.shiftKey) {
-    clearKeyboard();
-    if (keyboard.classList.contains("ru")) {
-      keyboard.classList.remove("ru");
-      keyboard.classList.add("en");
-    } else {
-      keyboard.classList.add("ru");
-      keyboard.classList.remove("en");
-    }
-    addKeys();
-  }
-});
+
+window.onkeydown = keysHandler;
