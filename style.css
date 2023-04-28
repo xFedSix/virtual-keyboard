@@ -42,12 +42,12 @@
 }
 
 .keyboard__key:hover {
-    background: #ea2d27
+    background: #3761ec
 }
 .active {
     border-radius: 30px;
     transition: border-radius .01s, background-color .2s;
-    background: pink;
+    background: rgb(28, 59, 239);
 }
 .keyboard__key_wide {
     width: 80px;

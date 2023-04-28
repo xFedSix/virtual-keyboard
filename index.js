@@ -119,7 +119,7 @@ const russianKeys = {
   Semicolon: ["ж", "Ж"],
   Quote: ["э", "Э"],
   Enter: ["enter", "enter"],
-  ShiftLeft: "shift",
+  ShiftLeft: ["shift", "shift"],
   KeyZ: ["я", "Я"],
   KeyX: ["ч", "Ч"],
   KeyC: ["с", "С"],
