@@ -1,14 +1,14 @@
-function addMainElement() {
+const addMainElement = () => {
   const main = document.createElement("main");
   main.className = "main";
   let template = "";
   template += `<h1 class="title">Виртуальная клавиатура</h1>`;
   template += `<textarea class="textarea"></textarea>`;
-  template += `<div class="keyboard" id="keyboard"></div>`;
-  template += `<p class="paragraf">Клавиатура создана в операционной системе Windows<br />Для переключения языка комбинация: левыe ctrl + alt</p>`;
+  template += `<div class="keyboard ru" id="keyboard"></div>`;
+  template += `<p class="paragraf">Клавиатура создана в операционной системе Windows<br />Для переключения языка комбинация: левыe alt + Shift</p>`;
   document.body.append(main);
   document.querySelector(".main").innerHTML = template;
-}
+};
 addMainElement();
 
 const englishKeys = {
@@ -119,7 +119,7 @@ const russianKeys = {
   Semicolon: ["ж", "Ж"],
   Quote: ["э", "Э"],
   Enter: ["enter", "enter"],
-  ShiftLeft: "shift",
+  ShiftLeft: ["shift", "shift"],
   KeyZ: ["я", "Я"],
   KeyX: ["ч", "Ч"],
   KeyC: ["с", "С"],
@@ -142,35 +142,65 @@ const russianKeys = {
   ArrowDown: "▼",
   ArrowRight: "▶",
 };
+const keyboard = document.querySelector(".keyboard");
 
-let keys = englishKeys;
-function addKeys() {
-  let keyCodes = Object.keys(keys);
-  let keyOut = "";
-  keyCodes.forEach((i) => {
-    itemIndex = keyCodes.indexOf(i);
-    if (
-      itemIndex == 14 ||
-      itemIndex == 28 ||
-      itemIndex == 41 ||
-      itemIndex == 54
-    ) {
-      keyOut += `<br>`;
-    }
-    if (keys[i][0].match(/delete|tab|CapsLock|enter|shift| /)) {
-      keyOut +=
-        `<button type="button" class="keyboard__key keyboard__key_wide" id = "${i}" data="${i}">` +
-        keys[i][0] +
-        `</button>`;
-    } else {
-      keyOut +=
-        `<button type="button" class="keyboard__key" id = "${i}" data="${i}">` +
-        keys[i][0] +
-        `</button>`;
-    }
-    document.querySelector(".keyboard").innerHTML = keyOut;
-  });
-}
+const addKeys = () => {
+  if (keyboard.classList.contains("ru")) {
+    let keys = russianKeys;
+    let keyCodes = Object.keys(keys);
+    let keyOut = "";
+    keyCodes.forEach((i) => {
+      itemIndex = keyCodes.indexOf(i);
+      if (
+        itemIndex == 14 ||
+        itemIndex == 28 ||
+        itemIndex == 41 ||
+        itemIndex == 54
+      ) {
+        keyOut += `<br>`;
+      }
+      if (keys[i][0].match(/delete|tab|CapsLock|enter|shift| /)) {
+        keyOut +=
+          `<button type="button" class="keyboard__key keyboard__key_wide" id = "${i}" data="${i}">` +
+          keys[i][0] +
+          `</button>`;
+      } else {
+        keyOut +=
+          `<button type="button" class="keyboard__key" id = "${i}" data="${i}">` +
+          keys[i][0] +
+          `</button>`;
+      }
+      document.querySelector(".keyboard").innerHTML = keyOut;
+    });
+  } else {
+    let keys = englishKeys;
+    let keyCodes = Object.keys(keys);
+    let keyOut = "";
+    keyCodes.forEach((i) => {
+      itemIndex = keyCodes.indexOf(i);
+      if (
+        itemIndex == 14 ||
+        itemIndex == 28 ||
+        itemIndex == 41 ||
+        itemIndex == 54
+      ) {
+        keyOut += `<br>`;
+      }
+      if (keys[i][0].match(/delete|tab|CapsLock|enter|shift| /)) {
+        keyOut +=
+          `<button type="button" class="keyboard__key keyboard__key_wide" id = "${i}" data="${i}">` +
+          keys[i][0] +
+          `</button>`;
+      } else {
+        keyOut +=
+          `<button type="button" class="keyboard__key" id = "${i}" data="${i}">` +
+          keys[i][0] +
+          `</button>`;
+      }
+      document.querySelector(".keyboard").innerHTML = keyOut;
+    });
+  }
+};
 addKeys();
 let keyValue = document.querySelectorAll(".keyboard__key");
 let textArea = document.querySelector(".textarea");
@@ -229,3 +259,19 @@ function removeClass() {
     e.classList.remove("active");
   });
 }
+const clearKeyboard = () => {
+  document.getElementById("keyboard").innerHTML = "";
+};
+window.addEventListener("keydown", function (e) {
+  if (e.altKey && e.shiftKey) {
+    clearKeyboard();
+    if (keyboard.classList.contains("ru")) {
+      keyboard.classList.remove("ru");
+      keyboard.classList.add("en");
+    } else {
+      keyboard.classList.add("ru");
+      keyboard.classList.remove("en");
+    }
+    addKeys();
+  }
+});
