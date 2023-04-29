@@ -5,7 +5,7 @@ const addMainElement = () => {
   template += `<h1 class="title">Виртуальная клавиатура</h1>`;
   template += `<textarea class="textarea"></textarea>`;
   template += `<div class="keyboard ru" id="keyboard"></div>`;
-  template += `<p class="paragraf">Клавиатура создана в операционной системе Windows<br />Для переключения языка комбинация: левыe alt + Shift</p>`;
+  template += `<p class="paragraf">Клавиатура создана в операционной системе Windows<br />Для переключения языка комбинация: левыe alt + Ctrl</p>`;
   document.body.append(main);
   document.querySelector(".main").innerHTML = template;
 };
@@ -64,7 +64,7 @@ const englishKeys = {
   Comma: [",", "<"],
   Period: [".", ">"],
   Slash: ["/", "?"],
-  ArrowUp: "▲",
+  ArrowUp: ["▲", "▲"],
   ShiftRight: ["shift", "shift"],
   ControlLeft: ["ctrl", "ctrl"],
   WIN: ["Win", "Win"],
@@ -72,9 +72,9 @@ const englishKeys = {
   Space: [" ", " "],
   AltRight: ["alt", "alt"],
   ControlRight: ["ctrl", "ctrl"],
-  ArrowLeft: "◀",
-  ArrowDown: "▼",
-  ArrowRight: "▶",
+  ArrowLeft: ["◀", "◀"],
+  ArrowDown: ["▼", "▼"],
+  ArrowRight: ["▶", "▶"],
 };
 
 const russianKeys = {
@@ -107,7 +107,7 @@ const russianKeys = {
   BracketRight: ["ъ", "Ъ"],
   Backslash: ["/", "|"],
   CapsLock: ["caps lock", "caps lock"],
-  KeyA: ["ф", "ф"],
+  KeyA: ["ф", "Ф"],
   KeyS: ["ы", "Ы"],
   KeyD: ["в", "В"],
   KeyF: ["а", "А"],
@@ -130,7 +130,7 @@ const russianKeys = {
   Comma: ["б", "Б"],
   Period: ["ю", "Ю"],
   Slash: [".", ","],
-  ArrowUp: "▲",
+  ArrowUp: ["▲", "▲"],
   ShiftRight: ["shift", "shift"],
   ControlLeft: ["ctrl", "ctrl"],
   WIN: ["Win", "Win"],
@@ -138,9 +138,9 @@ const russianKeys = {
   Space: [" ", " "],
   AltRight: ["alt", "alt"],
   ControlRight: ["ctrl", "ctrl"],
-  ArrowLeft: "◀",
-  ArrowDown: "▼",
-  ArrowRight: "▶",
+  ArrowLeft: ["◀", "◀"],
+  ArrowDown: ["▼", "▼"],
+  ArrowRight: ["▶", "▶"],
 };
 const keyboard = document.querySelector(".keyboard");
 
@@ -165,10 +165,18 @@ const addKeys = () => {
           `<button type="button" class="keyboard__key keyboard__key_wide" id = "${i}" data="${i}">` +
           keys[i][0] +
           `</button>`;
+        keyOut +=
+          `<button type="button" class="keyboard__key keyboard__key_wide hiden" id = "${i}" data="${i}">` +
+          keys[i][1] +
+          `</button>`;
       } else {
         keyOut +=
           `<button type="button" class="keyboard__key" id = "${i}" data="${i}">` +
           keys[i][0] +
+          `</button>`;
+        keyOut +=
+          `<button type="button" class="keyboard__key hiden" id = "${i}" data="${i}">` +
+          keys[i][1] +
           `</button>`;
       }
       document.querySelector(".keyboard").innerHTML = keyOut;
@@ -192,10 +200,18 @@ const addKeys = () => {
           `<button type="button" class="keyboard__key keyboard__key_wide" id = "${i}" data="${i}">` +
           keys[i][0] +
           `</button>`;
+        keyOut +=
+          `<button type="button" class="keyboard__key keyboard__key_wide hiden" id = "${i}" data="${i}">` +
+          keys[i][1] +
+          `</button>`;
       } else {
         keyOut +=
           `<button type="button" class="keyboard__key" id = "${i}" data="${i}">` +
           keys[i][0] +
+          `</button>`;
+        keyOut +=
+          `<button type="button" class="keyboard__key hiden" id = "${i}" data="${i}">` +
+          keys[i][1] +
           `</button>`;
       }
       document.querySelector(".keyboard").innerHTML = keyOut;
@@ -207,10 +223,9 @@ addKeys();
 const clearKeyboard = () => {
   document.getElementById("keyboard").innerHTML = "";
 };
-let keyValue = document.querySelectorAll(".keyboard__key");
 
 window.addEventListener("keydown", function (e) {
-  if (e.altKey && e.shiftKey) {
+  if (e.altKey && e.ctrlKey) {
     clearKeyboard();
     if (keyboard.classList.contains("ru")) {
       keyboard.classList.remove("ru");
@@ -236,18 +251,22 @@ keyboard.onclick = (e) => {
     target.id !== "Backspace" &&
     target.id !== "Enter" &&
     target.id !== "ShiftRight" &&
-    target.id !== "ArrowUp" &&
-    target.id !== "ArrowDown" &&
-    target.id !== "ArrowLeft" &&
-    target.id !== "ArrowRight" &&
+    // target.id !== "ArrowUp" &&
+    // target.id !== "ArrowDown" &&
+    // target.id !== "ArrowLeft" &&
+    // target.id !== "ArrowRight" &&
     target.id !== "AltRight" &&
     target.id !== "ControlRight"
   ) {
     textArea.textContent += target.textContent;
   }
 };
-
+let keyValue = document.querySelectorAll(".keyboard__key");
 const keysHandler = (e) => {
+  const pressedKey = document.querySelector(
+    ".keyboard__key[data=" + e.code + "]"
+  );
+
   if (
     e.code !== "AltLeft" &&
     e.code !== "WIN" &&
@@ -258,22 +277,40 @@ const keysHandler = (e) => {
     e.code !== "Backspace" &&
     e.code !== "Enter" &&
     e.code !== "ShiftRight" &&
-    e.code !== "ArrowUp" &&
-    e.code !== "ArrowDown" &&
-    e.code !== "ArrowLeft" &&
-    e.code !== "ArrowRight" &&
+    // e.code !== "ArrowUp" &&
+    // e.code !== "ArrowDown" &&
+    // e.code !== "ArrowLeft" &&
+    // e.code !== "ArrowRight" &&
     e.code !== "AltRight" &&
     e.code !== "ControlRight"
   ) {
     textArea.textContent += e.key;
   }
+  pressedKey.classList.add("active");
+  if (e.code === "ShiftLeft") {
+    console.log(pressedKey);
+    keyValue.forEach((item) => {
+      if (item.classList.contains("hiden")) {
+        item.classList.remove("hiden");
+      } else {
+        item.classList.add("hiden");
+      }
+    });
+  }
+};
+const keyClassRemove = (e) => {
   const pressedKey = document.querySelector(
     ".keyboard__key[data=" + e.code + "]"
   );
-  pressedKey.classList.add("active");
-  setTimeout(() => {
-    pressedKey.classList.remove("active");
-  }, 100);
+  pressedKey.classList.remove("active");
+  if (e.code === "ShiftLeft")
+    keyValue.forEach((e) => {
+      if (e.classList.contains("hiden")) {
+        e.classList.remove("hiden");
+      } else {
+        e.classList.add("hiden");
+      }
+    });
 };
-
 window.onkeydown = keysHandler;
+window.onkeyup = keyClassRemove;
