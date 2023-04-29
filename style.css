@@ -44,7 +44,7 @@
 .keyboard__key:hover {
     background: #3761ec
 }
-.active {
+.active, .capsLockActive {
     border-radius: 30px;
     transition: border-radius .01s, background-color .2s;
     background: rgb(28, 59, 239);
@@ -55,7 +55,4 @@
 #Space {
     max-width: 224px;
     width: 100%;
-}
-.hiden {
-    display: none;
 }

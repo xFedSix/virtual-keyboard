@@ -145,7 +145,7 @@ const russianKeys = {
 const keyboard = document.querySelector(".keyboard");
 
 let textArea = document.querySelector(".textarea");
-const addKeys = () => {
+const addLowerKeys = () => {
   if (keyboard.classList.contains("ru")) {
     let keys = russianKeys;
     let keyCodes = Object.keys(keys);
@@ -165,18 +165,10 @@ const addKeys = () => {
           `<button type="button" class="keyboard__key keyboard__key_wide" id = "${i}" data="${i}">` +
           keys[i][0] +
           `</button>`;
-        keyOut +=
-          `<button type="button" class="keyboard__key keyboard__key_wide hiden" id = "${i}" data="${i}">` +
-          keys[i][1] +
-          `</button>`;
       } else {
         keyOut +=
           `<button type="button" class="keyboard__key" id = "${i}" data="${i}">` +
           keys[i][0] +
-          `</button>`;
-        keyOut +=
-          `<button type="button" class="keyboard__key hiden" id = "${i}" data="${i}">` +
-          keys[i][1] +
           `</button>`;
       }
       document.querySelector(".keyboard").innerHTML = keyOut;
@@ -200,17 +192,67 @@ const addKeys = () => {
           `<button type="button" class="keyboard__key keyboard__key_wide" id = "${i}" data="${i}">` +
           keys[i][0] +
           `</button>`;
-        keyOut +=
-          `<button type="button" class="keyboard__key keyboard__key_wide hiden" id = "${i}" data="${i}">` +
-          keys[i][1] +
-          `</button>`;
       } else {
         keyOut +=
           `<button type="button" class="keyboard__key" id = "${i}" data="${i}">` +
           keys[i][0] +
           `</button>`;
+      }
+      document.querySelector(".keyboard").innerHTML = keyOut;
+    });
+  }
+};
+addLowerKeys();
+const addUpperKeys = () => {
+  if (keyboard.classList.contains("ru")) {
+    let keys = russianKeys;
+    let keyCodes = Object.keys(keys);
+    let keyOut = "";
+    keyCodes.forEach((i) => {
+      itemIndex = keyCodes.indexOf(i);
+      if (
+        itemIndex == 14 ||
+        itemIndex == 28 ||
+        itemIndex == 41 ||
+        itemIndex == 54
+      ) {
+        keyOut += `<br>`;
+      }
+      if (keys[i][0].match(/delete|tab|CapsLock|enter|shift| /)) {
         keyOut +=
-          `<button type="button" class="keyboard__key hiden" id = "${i}" data="${i}">` +
+          `<button type="button" class="keyboard__key keyboard__key_wide" id = "${i}" data="${i}">` +
+          keys[i][1] +
+          `</button>`;
+      } else {
+        keyOut +=
+          `<button type="button" class="keyboard__key" id = "${i}" data="${i}">` +
+          keys[i][1] +
+          `</button>`;
+      }
+      document.querySelector(".keyboard").innerHTML = keyOut;
+    });
+  } else {
+    let keys = englishKeys;
+    let keyCodes = Object.keys(keys);
+    let keyOut = "";
+    keyCodes.forEach((i) => {
+      itemIndex = keyCodes.indexOf(i);
+      if (
+        itemIndex == 14 ||
+        itemIndex == 28 ||
+        itemIndex == 41 ||
+        itemIndex == 54
+      ) {
+        keyOut += `<br>`;
+      }
+      if (keys[i][0].match(/delete|tab|CapsLock|enter|shift| /)) {
+        keyOut +=
+          `<button type="button" class="keyboard__key keyboard__key_wide" id = "${i}" data="${i}">` +
+          keys[i][1] +
+          `</button>`;
+      } else {
+        keyOut +=
+          `<button type="button" class="keyboard__key" id = "${i}" data="${i}">` +
           keys[i][1] +
           `</button>`;
       }
@@ -218,7 +260,6 @@ const addKeys = () => {
     });
   }
 };
-addKeys();
 
 const clearKeyboard = () => {
   document.getElementById("keyboard").innerHTML = "";
@@ -234,13 +275,18 @@ window.addEventListener("keydown", function (e) {
       keyboard.classList.add("ru");
       keyboard.classList.remove("en");
     }
-    addKeys();
+    addLowerKeys();
+  }
+  if (e.getModifierState("CapsLock")) {
+    addUpperKeys();
+    document.getElementById("CapsLock").classList.add("capsLockActive");
+  } else {
+    addLowerKeys();
   }
 });
 
 keyboard.onclick = (e) => {
   let target = e.target;
-  console.log(target);
   if (
     target.id !== "WIN" &&
     target.id !== "WIN" &&
@@ -263,11 +309,11 @@ keyboard.onclick = (e) => {
   }
 };
 let keyValue = document.querySelectorAll(".keyboard__key");
-const keysHandler = (e) => {
+
+window.onkeydown = (e) => {
   const pressedKey = document.querySelector(
     ".keyboard__key[data=" + e.code + "]"
   );
-
   if (
     e.code !== "AltLeft" &&
     e.code !== "WIN" &&
@@ -288,29 +334,10 @@ const keysHandler = (e) => {
     textArea.textContent += pressedKey.textContent;
   }
   pressedKey.classList.add("active");
-  if (e.code === "ShiftLeft") {
-    keyValue.forEach((item) => {
-      if (item.classList.contains("hiden")) {
-        item.classList.remove("hiden");
-      } else {
-        item.classList.add("hiden");
-      }
-    });
-  }
 };
-const keyClassRemove = (e) => {
+window.onkeyup = (e) => {
   const pressedKey = document.querySelector(
     ".keyboard__key[data=" + e.code + "]"
   );
   pressedKey.classList.remove("active");
-  if (e.code === "ShiftLeft")
-    keyValue.forEach((e) => {
-      if (e.classList.contains("hiden")) {
-        e.classList.remove("hiden");
-      } else {
-        e.classList.add("hiden");
-      }
-    });
 };
-window.onkeydown = keysHandler;
-window.onkeyup = keyClassRemove;
