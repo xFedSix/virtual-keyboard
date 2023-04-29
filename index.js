@@ -240,6 +240,7 @@ window.addEventListener("keydown", function (e) {
 
 keyboard.onclick = (e) => {
   let target = e.target;
+  console.log(target);
   if (
     target.id !== "WIN" &&
     target.id !== "WIN" &&
@@ -284,11 +285,10 @@ const keysHandler = (e) => {
     e.code !== "AltRight" &&
     e.code !== "ControlRight"
   ) {
-    textArea.textContent += e.key;
+    textArea.textContent += pressedKey.textContent;
   }
   pressedKey.classList.add("active");
   if (e.code === "ShiftLeft") {
-    console.log(pressedKey);
     keyValue.forEach((item) => {
       if (item.classList.contains("hiden")) {
         item.classList.remove("hiden");
