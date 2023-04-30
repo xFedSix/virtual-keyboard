@@ -4,7 +4,12 @@ const addMainElement = () => {
   let template = "";
   template += `<h1 class="title">Виртуальная клавиатура</h1>`;
   template += `<textarea class="textarea"></textarea>`;
-  template += `<div class="keyboard ru" id="keyboard"></div>`;
+  if (localStorage.getItem("lang")) {
+    template += `<div class="${localStorage.lang}" id="keyboard"></div>`;
+  } else {
+    template += `<div class="ru" id="keyboard"></div>`;
+  }
+
   template += `<p class="paragraf">Клавиатура создана в операционной системе Windows<br />Для переключения языка комбинация: левыe alt + Ctrl</p>`;
   document.body.append(main);
   document.querySelector(".main").innerHTML = template;
@@ -142,7 +147,7 @@ const russianKeys = {
   ArrowDown: ["▼", "▼"],
   ArrowRight: ["▶", "▶"],
 };
-const keyboard = document.querySelector(".keyboard");
+const keyboard = document.getElementById("keyboard");
 
 let textArea = document.querySelector(".textarea");
 const addLowerKeys = () => {
@@ -171,7 +176,7 @@ const addLowerKeys = () => {
           keys[i][0] +
           `</button>`;
       }
-      document.querySelector(".keyboard").innerHTML = keyOut;
+      keyboard.innerHTML = keyOut;
     });
   } else {
     let keys = englishKeys;
@@ -198,7 +203,7 @@ const addLowerKeys = () => {
           keys[i][0] +
           `</button>`;
       }
-      document.querySelector(".keyboard").innerHTML = keyOut;
+      keyboard.innerHTML = keyOut;
     });
   }
 };
@@ -229,7 +234,7 @@ const addUpperKeys = () => {
           keys[i][1] +
           `</button>`;
       }
-      document.querySelector(".keyboard").innerHTML = keyOut;
+      keyboard.innerHTML = keyOut;
     });
   } else {
     let keys = englishKeys;
@@ -256,13 +261,13 @@ const addUpperKeys = () => {
           keys[i][1] +
           `</button>`;
       }
-      document.querySelector(".keyboard").innerHTML = keyOut;
+      keyboard.innerHTML = keyOut;
     });
   }
 };
 
 const clearKeyboard = () => {
-  document.getElementById("keyboard").innerHTML = "";
+  keyboard.innerHTML = "";
 };
 
 window.addEventListener("keydown", function (e) {
@@ -276,6 +281,7 @@ window.addEventListener("keydown", function (e) {
       keyboard.classList.remove("en");
     }
     addLowerKeys();
+    setLocalStorageLanguage();
   }
   if (e.getModifierState("CapsLock")) {
     addUpperKeys();
@@ -288,7 +294,6 @@ window.addEventListener("keydown", function (e) {
 keyboard.onclick = (e) => {
   let target = e.target;
   if (
-    target.id !== "WIN" &&
     target.id !== "WIN" &&
     target.id !== "AltLeft" &&
     target.id !== "ControlLeft" &&
@@ -341,3 +346,16 @@ window.onkeyup = (e) => {
   );
   pressedKey.classList.remove("active");
 };
+
+function setLocalStorageLanguage() {
+  localStorage.setItem("lang", keyboard.className);
+}
+window.addEventListener("beforeunload", setLocalStorageLanguage);
+// function getLocalStorageLanguage() {
+//   if (localStorage.getItem("lang")) {
+//     let langFromLocalStore = localStorage.lang;
+//     keyboard.classList.add(langFromLocalStore);
+//   }
+// }
+window.addEventListener("beforeunload", setLocalStorageLanguage);
+// window.addEventListener("load", getLocalStorageLanguage);
