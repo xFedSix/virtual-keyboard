@@ -18,7 +18,7 @@
     font-size: 18px;
     color: #444444
 }
-.keyboard {
+#keyboard {
     width: 704px;
     margin: 0 auto;
     padding: 5px;
@@ -44,7 +44,7 @@
 .keyboard__key:hover {
     background: #3761ec
 }
-.active {
+.active, .capsLockActive {
     border-radius: 30px;
     transition: border-radius .01s, background-color .2s;
     background: rgb(28, 59, 239);

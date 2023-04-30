@@ -4,8 +4,13 @@ const addMainElement = () => {
   let template = "";
   template += `<h1 class="title">Виртуальная клавиатура</h1>`;
   template += `<textarea class="textarea"></textarea>`;
-  template += `<div class="keyboard ru" id="keyboard"></div>`;
-  template += `<p class="paragraf">Клавиатура создана в операционной системе Windows<br />Для переключения языка комбинация: левыe alt + Shift</p>`;
+  if (localStorage.getItem("lang")) {
+    template += `<div class="${localStorage.lang}" id="keyboard"></div>`;
+  } else {
+    template += `<div class="ru" id="keyboard"></div>`;
+  }
+
+  template += `<p class="paragraf">Клавиатура создана в операционной системе Windows<br />Для переключения языка комбинация: левыe alt + Ctrl</p>`;
   document.body.append(main);
   document.querySelector(".main").innerHTML = template;
 };
@@ -64,7 +69,7 @@ const englishKeys = {
   Comma: [",", "<"],
   Period: [".", ">"],
   Slash: ["/", "?"],
-  ArrowUp: "▲",
+  ArrowUp: ["▲", "▲"],
   ShiftRight: ["shift", "shift"],
   ControlLeft: ["ctrl", "ctrl"],
   WIN: ["Win", "Win"],
@@ -72,9 +77,9 @@ const englishKeys = {
   Space: [" ", " "],
   AltRight: ["alt", "alt"],
   ControlRight: ["ctrl", "ctrl"],
-  ArrowLeft: "◀",
-  ArrowDown: "▼",
-  ArrowRight: "▶",
+  ArrowLeft: ["◀", "◀"],
+  ArrowDown: ["▼", "▼"],
+  ArrowRight: ["▶", "▶"],
 };
 
 const russianKeys = {
@@ -107,7 +112,7 @@ const russianKeys = {
   BracketRight: ["ъ", "Ъ"],
   Backslash: ["/", "|"],
   CapsLock: ["caps lock", "caps lock"],
-  KeyA: ["ф", "ф"],
+  KeyA: ["ф", "Ф"],
   KeyS: ["ы", "Ы"],
   KeyD: ["в", "В"],
   KeyF: ["а", "А"],
@@ -130,7 +135,7 @@ const russianKeys = {
   Comma: ["б", "Б"],
   Period: ["ю", "Ю"],
   Slash: [".", ","],
-  ArrowUp: "▲",
+  ArrowUp: ["▲", "▲"],
   ShiftRight: ["shift", "shift"],
   ControlLeft: ["ctrl", "ctrl"],
   WIN: ["Win", "Win"],
@@ -138,14 +143,14 @@ const russianKeys = {
   Space: [" ", " "],
   AltRight: ["alt", "alt"],
   ControlRight: ["ctrl", "ctrl"],
-  ArrowLeft: "◀",
-  ArrowDown: "▼",
-  ArrowRight: "▶",
+  ArrowLeft: ["◀", "◀"],
+  ArrowDown: ["▼", "▼"],
+  ArrowRight: ["▶", "▶"],
 };
-const keyboard = document.querySelector(".keyboard");
+const keyboard = document.getElementById("keyboard");
 
 let textArea = document.querySelector(".textarea");
-const addKeys = () => {
+const addLowerKeys = () => {
   if (keyboard.classList.contains("ru")) {
     let keys = russianKeys;
     let keyCodes = Object.keys(keys);
@@ -171,7 +176,7 @@ const addKeys = () => {
           keys[i][0] +
           `</button>`;
       }
-      document.querySelector(".keyboard").innerHTML = keyOut;
+      keyboard.innerHTML = keyOut;
     });
   } else {
     let keys = englishKeys;
@@ -198,19 +203,75 @@ const addKeys = () => {
           keys[i][0] +
           `</button>`;
       }
-      document.querySelector(".keyboard").innerHTML = keyOut;
+      keyboard.innerHTML = keyOut;
     });
   }
 };
-addKeys();
+addLowerKeys();
+const addUpperKeys = () => {
+  if (keyboard.classList.contains("ru")) {
+    let keys = russianKeys;
+    let keyCodes = Object.keys(keys);
+    let keyOut = "";
+    keyCodes.forEach((i) => {
+      itemIndex = keyCodes.indexOf(i);
+      if (
+        itemIndex == 14 ||
+        itemIndex == 28 ||
+        itemIndex == 41 ||
+        itemIndex == 54
+      ) {
+        keyOut += `<br>`;
+      }
+      if (keys[i][0].match(/delete|tab|CapsLock|enter|shift| /)) {
+        keyOut +=
+          `<button type="button" class="keyboard__key keyboard__key_wide" id = "${i}" data="${i}">` +
+          keys[i][1] +
+          `</button>`;
+      } else {
+        keyOut +=
+          `<button type="button" class="keyboard__key" id = "${i}" data="${i}">` +
+          keys[i][1] +
+          `</button>`;
+      }
+      keyboard.innerHTML = keyOut;
+    });
+  } else {
+    let keys = englishKeys;
+    let keyCodes = Object.keys(keys);
+    let keyOut = "";
+    keyCodes.forEach((i) => {
+      itemIndex = keyCodes.indexOf(i);
+      if (
+        itemIndex == 14 ||
+        itemIndex == 28 ||
+        itemIndex == 41 ||
+        itemIndex == 54
+      ) {
+        keyOut += `<br>`;
+      }
+      if (keys[i][0].match(/delete|tab|CapsLock|enter|shift| /)) {
+        keyOut +=
+          `<button type="button" class="keyboard__key keyboard__key_wide" id = "${i}" data="${i}">` +
+          keys[i][1] +
+          `</button>`;
+      } else {
+        keyOut +=
+          `<button type="button" class="keyboard__key" id = "${i}" data="${i}">` +
+          keys[i][1] +
+          `</button>`;
+      }
+      keyboard.innerHTML = keyOut;
+    });
+  }
+};
 
 const clearKeyboard = () => {
-  document.getElementById("keyboard").innerHTML = "";
+  keyboard.innerHTML = "";
 };
-let keyValue = document.querySelectorAll(".keyboard__key");
 
 window.addEventListener("keydown", function (e) {
-  if (e.altKey && e.shiftKey) {
+  if (e.altKey && e.ctrlKey) {
     clearKeyboard();
     if (keyboard.classList.contains("ru")) {
       keyboard.classList.remove("ru");
@@ -219,14 +280,20 @@ window.addEventListener("keydown", function (e) {
       keyboard.classList.add("ru");
       keyboard.classList.remove("en");
     }
-    addKeys();
+    addLowerKeys();
+    setLocalStorageLanguage();
+  }
+  if (e.getModifierState("CapsLock")) {
+    addUpperKeys();
+    document.getElementById("CapsLock").classList.add("capsLockActive");
+  } else {
+    addLowerKeys();
   }
 });
 
 keyboard.onclick = (e) => {
   let target = e.target;
   if (
-    target.id !== "WIN" &&
     target.id !== "WIN" &&
     target.id !== "AltLeft" &&
     target.id !== "ControlLeft" &&
@@ -236,18 +303,22 @@ keyboard.onclick = (e) => {
     target.id !== "Backspace" &&
     target.id !== "Enter" &&
     target.id !== "ShiftRight" &&
-    target.id !== "ArrowUp" &&
-    target.id !== "ArrowDown" &&
-    target.id !== "ArrowLeft" &&
-    target.id !== "ArrowRight" &&
+    // target.id !== "ArrowUp" &&
+    // target.id !== "ArrowDown" &&
+    // target.id !== "ArrowLeft" &&
+    // target.id !== "ArrowRight" &&
     target.id !== "AltRight" &&
     target.id !== "ControlRight"
   ) {
     textArea.textContent += target.textContent;
   }
 };
+let keyValue = document.querySelectorAll(".keyboard__key");
 
-const keysHandler = (e) => {
+window.onkeydown = (e) => {
+  const pressedKey = document.querySelector(
+    ".keyboard__key[data=" + e.code + "]"
+  );
   if (
     e.code !== "AltLeft" &&
     e.code !== "WIN" &&
@@ -258,22 +329,33 @@ const keysHandler = (e) => {
     e.code !== "Backspace" &&
     e.code !== "Enter" &&
     e.code !== "ShiftRight" &&
-    e.code !== "ArrowUp" &&
-    e.code !== "ArrowDown" &&
-    e.code !== "ArrowLeft" &&
-    e.code !== "ArrowRight" &&
+    // e.code !== "ArrowUp" &&
+    // e.code !== "ArrowDown" &&
+    // e.code !== "ArrowLeft" &&
+    // e.code !== "ArrowRight" &&
     e.code !== "AltRight" &&
     e.code !== "ControlRight"
   ) {
-    textArea.textContent += e.key;
+    textArea.textContent += pressedKey.textContent;
   }
+  pressedKey.classList.add("active");
+};
+window.onkeyup = (e) => {
   const pressedKey = document.querySelector(
     ".keyboard__key[data=" + e.code + "]"
   );
-  pressedKey.classList.add("active");
-  setTimeout(() => {
-    pressedKey.classList.remove("active");
-  }, 100);
+  pressedKey.classList.remove("active");
 };
 
-window.onkeydown = keysHandler;
+function setLocalStorageLanguage() {
+  localStorage.setItem("lang", keyboard.className);
+}
+window.addEventListener("beforeunload", setLocalStorageLanguage);
+// function getLocalStorageLanguage() {
+//   if (localStorage.getItem("lang")) {
+//     let langFromLocalStore = localStorage.lang;
+//     keyboard.classList.add(langFromLocalStore);
+//   }
+// }
+window.addEventListener("beforeunload", setLocalStorageLanguage);
+// window.addEventListener("load", getLocalStorageLanguage);
