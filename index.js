@@ -200,20 +200,7 @@ const clearKeyboard = () => {
   keyboard.innerHTML = "";
 };
 
-window.addEventListener("keydown", function (e) {
-  if (e.altKey && e.ctrlKey) {
-    clearKeyboard();
-    if (keyboard.classList.contains("ru")) {
-      keyboard.classList.remove("ru");
-      keyboard.classList.add("en");
-    } else {
-      keyboard.classList.add("ru");
-      keyboard.classList.remove("en");
-    }
-    addLowerKeys();
-    setLocalStorageLanguage();
-    return;
-  }
+window.addEventListener("keydown", (e) => {
   if (e.getModifierState("CapsLock")) {
     addUpperKeys();
     document.getElementById("CapsLock").classList.add("capsLockActive");
@@ -223,6 +210,19 @@ window.addEventListener("keydown", function (e) {
     addLowerKeys();
   }
 });
+keyboard.addEventListener("click", (e) => {
+  if (
+    e.target.id === "CapsLock" &&
+    !e.target.classList.contains("capsLockActive")
+  ) {
+    addUpperKeys();
+    document.getElementById("CapsLock").classList.add("capsLockActive");
+  } else if (e.target.classList.contains("capsLockActive")) {
+    addLowerKeys();
+    document.getElementById("CapsLock").classList.remove("capsLockActive");
+  }
+});
+
 const specialKeys = [
   "WIN",
   "AltLeft",
@@ -247,13 +247,15 @@ keyboard.onmousedown = ({ target: { id, textContent } }) => {
     backspace();
   }
 };
-
 window.onkeydown = (e) => {
-  const pressedKey = document.querySelector(`.keyboard__key[data=${e.code}]`);
-  pressedKey.classList.add("active");
+  document
+    .querySelector(`.keyboard__key[data=${e.code}]`)
+    .classList.add("active");
   e.preventDefault();
   if (!specialKeys.includes(e.code)) {
-    textArea.value += pressedKey.textContent;
+    textArea.value += document.querySelector(
+      `.keyboard__key[data=${e.code}]`
+    ).textContent;
   } else if (e.code === "Tab") {
     tab();
   } else if (e.code === "Enter") {
@@ -261,10 +263,24 @@ window.onkeydown = (e) => {
   } else if (e.code === "Backspace") {
     backspace();
   }
+  if (e.altKey && e.ctrlKey) {
+    clearKeyboard();
+    if (keyboard.classList.contains("ru")) {
+      keyboard.classList.remove("ru");
+      keyboard.classList.add("en");
+    } else {
+      keyboard.classList.add("ru");
+      keyboard.classList.remove("en");
+    }
+    addLowerKeys();
+    setLocalStorageLanguage();
+    return;
+  }
 };
 window.onkeyup = (e) => {
-  const pressedKey = document.querySelector(`.keyboard__key[data=${e.code}]`);
-  pressedKey.classList.remove("active");
+  document
+    .querySelector(`.keyboard__key[data=${e.code}]`)
+    .classList.remove("active");
   if (e.key === "Shift") {
     addLowerKeys();
   }
