@@ -245,6 +245,12 @@ const specialKeys = [
 keyboard.onmousedown = ({ target: { id, textContent } }) => {
   if (!specialKeys.includes(id)) {
     textArea.value += textContent;
+  } else if (id === "Tab") {
+    textArea.value += "\t";
+  } else if (id === "Enter") {
+    textArea.value += "\n";
+  } else if (id === "Backspace") {
+    backspace();
   }
 };
 const keyValue = document.querySelectorAll(".keyboard__key");
@@ -253,14 +259,15 @@ window.onkeydown = (e) => {
   const pressedKey = document.querySelector(
     ".keyboard__key[data=" + e.code + "]"
   );
+  e.preventDefault();
   if (!specialKeys.includes(e.code)) {
     textArea.value += pressedKey.textContent;
-  } else if (e.code == "Tab") {
-    e.preventDefault();
+  } else if (e.code === "Tab") {
     textArea.value += "\t";
-  } else if (e.code == "Enter") {
-    e.preventDefault();
+  } else if (e.code === "Enter") {
     textArea.value += "\n";
+  } else if (e.code === "Backspace") {
+    backspace();
   }
   pressedKey.classList.add("active");
 };
@@ -273,7 +280,9 @@ window.onkeyup = (e) => {
     addLowerKeys();
   }
 };
-
+const backspace = () => {
+  textArea.value = textArea.value.substring(0, textArea.value.length - 1);
+};
 function setLocalStorageLanguage() {
   localStorage.setItem("lang", keyboard.className);
 }
