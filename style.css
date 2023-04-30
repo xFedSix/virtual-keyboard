@@ -11,7 +11,7 @@
 }
 .textarea {
     display: block;
-    width: 695px;
+    width: 600px;
     height: 200px;
     margin: 10px auto 10px;
     padding: 10px;
@@ -19,9 +19,8 @@
     color: #444444
 }
 #keyboard {
-    width: 704px;
+    width: 600px;
     margin: 0 auto;
-    padding: 5px;
     padding-left: 0;
     background: #c0bcbc;
     border: 3px solid #0b0b0b;
