@@ -145,7 +145,7 @@ const russianKeys = {
 };
 const keyboard = document.getElementById("keyboard");
 
-let textArea = document.querySelector(".textarea");
+const textArea = document.querySelector(".textarea");
 const addLowerKeys = () => {
   const keys = keyboard.classList.contains("ru") ? russianKeys : englishKeys;
   const keyCodes = Object.keys(keys);
@@ -160,24 +160,20 @@ const addLowerKeys = () => {
     ) {
       keyOut += `<br>`;
     }
-    if (keys[i][0].match(/delete|tab|CapsLock|enter|shift| /)) {
-      keyOut +=
-        `<button type="button" class="keyboard__key keyboard__key_wide" id = "${i}" data="${i}">` +
+    keyOut += keys[i][0].match(/delete|tab|CapsLock|enter|shift| /)
+      ? `<button type="button" class="keyboard__key keyboard__key_wide" id = "${i}" data="${i}">` +
+        keys[i][0] +
+        `</button>`
+      : `<button type="button" class="keyboard__key" id = "${i}" data="${i}">` +
         keys[i][0] +
         `</button>`;
-    } else {
-      keyOut +=
-        `<button type="button" class="keyboard__key" id = "${i}" data="${i}">` +
-        keys[i][0] +
-        `</button>`;
-    }
     keyboard.innerHTML = keyOut;
   });
 };
 addLowerKeys();
 const addUpperKeys = () => {
   const keys = keyboard.classList.contains("ru") ? russianKeys : englishKeys;
-  let keyCodes = Object.keys(keys);
+  const keyCodes = Object.keys(keys);
   let keyOut = "";
   keyCodes.forEach((i) => {
     itemIndex = keyCodes.indexOf(i);
@@ -189,17 +185,13 @@ const addUpperKeys = () => {
     ) {
       keyOut += `<br>`;
     }
-    if (keys[i][0].match(/delete|tab|CapsLock|enter|shift| /)) {
-      keyOut +=
-        `<button type="button" class="keyboard__key keyboard__key_wide" id = "${i}" data="${i}">` +
+    keyOut += keys[i][0].match(/delete|tab|CapsLock|enter|shift| /)
+      ? `<button type="button" class="keyboard__key keyboard__key_wide" id = "${i}" data="${i}">` +
+        keys[i][1] +
+        `</button>`
+      : `<button type="button" class="keyboard__key" id = "${i}" data="${i}">` +
         keys[i][1] +
         `</button>`;
-    } else {
-      keyOut +=
-        `<button type="button" class="keyboard__key" id = "${i}" data="${i}">` +
-        keys[i][1] +
-        `</button>`;
-    }
     keyboard.innerHTML = keyOut;
   });
 };
@@ -220,7 +212,9 @@ window.addEventListener("keydown", function (e) {
     }
     addLowerKeys();
     setLocalStorageLanguage();
-  } else if (e.getModifierState("CapsLock")) {
+    return;
+  }
+  if (e.getModifierState("CapsLock")) {
     addUpperKeys();
     document.getElementById("CapsLock").classList.add("capsLockActive");
   } else if (e.shiftKey) {
@@ -246,35 +240,30 @@ keyboard.onmousedown = ({ target: { id, textContent } }) => {
   if (!specialKeys.includes(id)) {
     textArea.value += textContent;
   } else if (id === "Tab") {
-    textArea.value += "\t";
+    tab();
   } else if (id === "Enter") {
-    textArea.value += "\n";
+    enter();
   } else if (id === "Backspace") {
     backspace();
   }
 };
-const keyValue = document.querySelectorAll(".keyboard__key");
 
 window.onkeydown = (e) => {
-  const pressedKey = document.querySelector(
-    ".keyboard__key[data=" + e.code + "]"
-  );
+  const pressedKey = document.querySelector(`.keyboard__key[data=${e.code}]`);
+  pressedKey.classList.add("active");
   e.preventDefault();
   if (!specialKeys.includes(e.code)) {
     textArea.value += pressedKey.textContent;
   } else if (e.code === "Tab") {
-    textArea.value += "\t";
+    tab();
   } else if (e.code === "Enter") {
-    textArea.value += "\n";
+    enter();
   } else if (e.code === "Backspace") {
     backspace();
   }
-  pressedKey.classList.add("active");
 };
 window.onkeyup = (e) => {
-  const pressedKey = document.querySelector(
-    ".keyboard__key[data=" + e.code + "]"
-  );
+  const pressedKey = document.querySelector(`.keyboard__key[data=${e.code}]`);
   pressedKey.classList.remove("active");
   if (e.key === "Shift") {
     addLowerKeys();
@@ -282,6 +271,12 @@ window.onkeyup = (e) => {
 };
 const backspace = () => {
   textArea.value = textArea.value.substring(0, textArea.value.length - 1);
+};
+const tab = () => {
+  textArea.value += "\t";
+};
+const enter = () => {
+  textArea.value += "\n";
 };
 function setLocalStorageLanguage() {
   localStorage.setItem("lang", keyboard.className);
