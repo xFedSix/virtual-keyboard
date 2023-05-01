@@ -200,16 +200,6 @@ const clearKeyboard = () => {
   keyboard.innerHTML = "";
 };
 
-window.addEventListener("keydown", (e) => {
-  if (e.getModifierState("CapsLock")) {
-    addUpperKeys();
-    document.getElementById("CapsLock").classList.add("capsLockActive");
-  } else if (e.shiftKey) {
-    addUpperKeys();
-  } else {
-    addLowerKeys();
-  }
-});
 keyboard.addEventListener("click", (e) => {
   if (
     e.target.id === "CapsLock" &&
@@ -245,17 +235,33 @@ keyboard.onmousedown = ({ target: { id, textContent } }) => {
     enter();
   } else if (id === "Backspace") {
     backspace();
+  } else if (id === "ShiftLeft" || id === "ShiftRight") {
+    addUpperKeys();
   }
 };
+keyboard.onmouseup = ({ target: { id } }) => {
+  if (id === "ShiftLeft" || id === "ShiftRight") {
+    addLowerKeys();
+  }
+};
+window.addEventListener("keydown", (e) => {
+  if (e.getModifierState("CapsLock")) {
+    addUpperKeys();
+    document.getElementById("CapsLock").classList.add("capsLockActive");
+  } else if (e.shiftKey) {
+    addUpperKeys();
+  } else {
+    addLowerKeys();
+  }
+});
 window.onkeydown = (e) => {
-  document
-    .querySelector(`.keyboard__key[data=${e.code}]`)
-    .classList.add("active");
-  e.preventDefault();
-  if (!specialKeys.includes(e.code)) {
+  const keyCode = document.querySelector(`.keyboard__key[data=${e.code}]`);
+  if (!specialKeys.includes(e.code) && keyCode) {
     textArea.value += document.querySelector(
       `.keyboard__key[data=${e.code}]`
     ).textContent;
+
+    keyCode.classList.add("active");
   } else if (e.code === "Tab") {
     tab();
   } else if (e.code === "Enter") {
@@ -274,13 +280,13 @@ window.onkeydown = (e) => {
     }
     addLowerKeys();
     setLocalStorageLanguage();
-    return;
   }
 };
 window.onkeyup = (e) => {
-  document
-    .querySelector(`.keyboard__key[data=${e.code}]`)
-    .classList.remove("active");
+  const keyCode = document.querySelector(`.keyboard__key[data=${e.code}]`);
+  if (!specialKeys.includes(e.code) && keyCode) {
+    keyCode.classList.remove("active");
+  }
   if (e.key === "Shift") {
     addLowerKeys();
   }
